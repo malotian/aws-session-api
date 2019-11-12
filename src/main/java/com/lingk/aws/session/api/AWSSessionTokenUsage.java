@@ -38,6 +38,6 @@ public class AWSSessionTokenUsage implements Function {
 		}
 		HttpHeaders httpHeaders = new HttpHeaders();
 		//httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
-		return new ResponseEntity(sb.toString(), httpHeaders, HttpStatus.OK);
+		return new ResponseEntity<StringBuffer>(sb, httpHeaders, HttpStatus.OK);
 	}
 }
