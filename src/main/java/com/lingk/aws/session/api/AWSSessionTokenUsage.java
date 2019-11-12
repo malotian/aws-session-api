@@ -32,12 +32,12 @@ public class AWSSessionTokenUsage implements Function {
 				Map.Entry<String, JsonNode> next = jsonFields.next();
 				sb.append(MessageFormat.format("export {}={}\n", next.getKey(), next.getValue().asText()));
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			sb.append(e.getMessage());
 		}
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
+		//httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
 		return new ResponseEntity(sb.toString(), httpHeaders, HttpStatus.OK);
 	}
 }
