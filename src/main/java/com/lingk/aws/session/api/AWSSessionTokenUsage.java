@@ -1,12 +1,13 @@
 package com.lingk.aws.session.api;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,28 +18,19 @@ import io.fission.Function;
 public class AWSSessionTokenUsage implements Function {
 	ObjectMapper mapper = new ObjectMapper();
 
-	@SuppressWarnings("serial")
-	static HashMap<String, String> replacer = new HashMap<String, String>() {
-		{
-			put("sessionToken", "AWS_SESSION_TOKEN");
-			put("awsaccessKeyId", "AWS_ACCESS_KEY_ID");
-			put("awssecretKey", "AWS_SECRET_ACCESS_KEY");
-		}
-	};
-
 	public ResponseEntity call(RequestEntity req, Context context) {
+		MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(req.getUrl()).build().getQueryParams();
+
 		StringBuffer sb = new StringBuffer();
 		try {
-			HashMap data = (HashMap) req.getBody();
 			sb.append("#####linux\n\n");
-			for (Object key : data.keySet()) {
-				sb.append(MessageFormat.format("export {0}={1}\n", replacer.get(key), data.get(key)));
-			}
-
+			sb.append(MessageFormat.format("export AWS_SESSION_TOKEN={1}", parameters.getFirst("sessionToken")));
+			sb.append(MessageFormat.format("export AWS_ACCESS_KEY_ID={1}", parameters.getFirst("awsaccessKeyId")));
+			sb.append(MessageFormat.format("export AWS_SECRET_ACCESS_KEY={1}", parameters.getFirst("awssecretKey")));
 			sb.append("\n\n#####windows\n\n");
-			for (Object key : data.keySet()) {
-				sb.append(MessageFormat.format("set {0}={1}\n", replacer.get(key), data.get(key)));
-			}
+			sb.append(MessageFormat.format("set AWS_SESSION_TOKEN={1}", parameters.getFirst("sessionToken")));
+			sb.append(MessageFormat.format("set AWS_ACCESS_KEY_ID={1}", parameters.getFirst("awsaccessKeyId")));
+			sb.append(MessageFormat.format("set AWS_SECRET_ACCESS_KEY={1}", parameters.getFirst("awssecretKey")));
 
 		} catch (Exception e) {
 			sb.append(e.getMessage());
