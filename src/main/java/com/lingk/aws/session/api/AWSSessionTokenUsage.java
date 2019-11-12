@@ -20,7 +20,7 @@ public class AWSSessionTokenUsage implements Function {
 	@SuppressWarnings("serial")
 	static HashMap<String, String> replacer = new HashMap<String, String>() {
 		{
-			put("sessionToken", "AWS_SECRET_ACCESS_KEY");
+			put("sessionToken", "AWS_SESSION_TOKEN");
 			put("awsaccessKeyId", "AWS_ACCESS_KEY_ID");
 			put("awssecretKey", "AWS_SECRET_ACCESS_KEY");
 		}
