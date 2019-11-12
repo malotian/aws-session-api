@@ -10,7 +10,7 @@ fission fn create --name ${name} --pkg $pkgname --entrypoint com.lingk.aws.sessi
 fission route create --url /${name} --function ${name} --createingress
 fission fn delete --name ${name}-usage
 fission fn create --name ${name}-usage --pkg $pkgname --method POST --entrypoint com.lingk.aws.session.api.AWSSessionTokenUsage
-fission route create --url /${name}-usage --function ${name} --createingress
+fission route create --url /${name}-usage --function ${name}-usage --createingress
 
 
 
