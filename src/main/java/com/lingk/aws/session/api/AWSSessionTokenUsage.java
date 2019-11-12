@@ -17,18 +17,27 @@ import io.fission.Function;
 public class AWSSessionTokenUsage implements Function {
 	ObjectMapper mapper = new ObjectMapper();
 
+	@SuppressWarnings("serial")
+	static HashMap<String, String> replacer = new HashMap<String, String>() {
+		{
+			put("sessionToken", "AWS_SECRET_ACCESS_KEY");
+			put("awsaccessKeyId", "AWS_ACCESS_KEY_ID");
+			put("awssecretKey", "AWS_SECRET_ACCESS_KEY");
+		}
+	};
+
 	public ResponseEntity call(RequestEntity req, Context context) {
 		StringBuffer sb = new StringBuffer();
 		try {
 			HashMap data = (HashMap) req.getBody();
 			sb.append("#####linux\n\n");
 			for (Object key : data.keySet()) {
-				sb.append(MessageFormat.format("export {0}={1}\n", key, data.get(key)));
+				sb.append(MessageFormat.format("export {0}={1}\n", replacer.get(key), data.get(key)));
 			}
 
 			sb.append("\n\n#####windows\n\n");
 			for (Object key : data.keySet()) {
-				sb.append(MessageFormat.format("set {0}={1}\n", key, data.get(key)));
+				sb.append(MessageFormat.format("set {0}={1}\n", replacer.get(key), data.get(key)));
 			}
 
 		} catch (Exception e) {
