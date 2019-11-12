@@ -1,7 +1,7 @@
 package com.lingk.aws.session.api;
 
-import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -22,7 +22,22 @@ public class AWSSessionTokenUsage implements Function {
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity call(RequestEntity req, Context context) {
+		StringBuffer sb = new StringBuffer();
+		try {
+			HashMap data = (HashMap) req.getBody();
+			sb.append("#linux");
+			for (Object key : data.keySet()) {
+				sb.append(MessageFormat.format("export {}={}\n", key, data.get(key)));
+			}
+		} catch (Exception e) {
+			sb.append(e.getMessage());
+		}
+		HttpHeaders httpHeaders = new HttpHeaders();
+		return new ResponseEntity<StringBuffer>(sb, httpHeaders, HttpStatus.OK);
+	}
 
+	@SuppressWarnings("unchecked")
+	public ResponseEntity call2(RequestEntity req, Context context) {
 		StringBuffer sb = new StringBuffer();
 		try {
 			JsonNode body = mapper.readTree(req.getBody().toString());
@@ -33,11 +48,9 @@ public class AWSSessionTokenUsage implements Function {
 				sb.append(MessageFormat.format("export {}={}\n", next.getKey(), next.getValue().asText()));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			sb.append(e.getMessage());
 		}
 		HttpHeaders httpHeaders = new HttpHeaders();
-		//httpHeaders.setContentType(org.springframework.http.MediaType.TEXT_PLAIN);
 		return new ResponseEntity<StringBuffer>(sb, httpHeaders, HttpStatus.OK);
 	}
 }
