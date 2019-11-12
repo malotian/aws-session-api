@@ -8,6 +8,9 @@ echo $pkgname
 fission fn delete --name ${name}
 fission fn create --name ${name} --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenHelper
 fission route create --url /${name} --function ${name} --createingress
+fission fn delete --name ${name}-usage
+fission fn create --name ${name}-usage --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenUsage
+fission route create --url /${name}-usage --function ${name} --createingress
 
 
 
