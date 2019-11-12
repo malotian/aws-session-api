@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -36,6 +37,7 @@ public class AWSSessionTokenUsage implements Function {
 			sb.append(e.getMessage());
 		}
 		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
 		return new ResponseEntity<StringBuffer>(sb, httpHeaders, HttpStatus.OK);
 	}
 }
