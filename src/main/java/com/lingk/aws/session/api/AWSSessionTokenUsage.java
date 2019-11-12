@@ -24,13 +24,13 @@ public class AWSSessionTokenUsage implements Function {
 		StringBuffer sb = new StringBuffer();
 		try {
 			sb.append("#####linux\n\n");
-			sb.append(MessageFormat.format("export AWS_SESSION_TOKEN={1}", parameters.getFirst("sessionToken")));
-			sb.append(MessageFormat.format("export AWS_ACCESS_KEY_ID={1}", parameters.getFirst("awsaccessKeyId")));
-			sb.append(MessageFormat.format("export AWS_SECRET_ACCESS_KEY={1}", parameters.getFirst("awssecretKey")));
+			sb.append(MessageFormat.format("export AWS_SESSION_TOKEN={0}\n", parameters.getFirst("sessionToken")));
+			sb.append(MessageFormat.format("export AWS_ACCESS_KEY_ID={0}\n", parameters.getFirst("awsaccessKeyId")));
+			sb.append(MessageFormat.format("export AWS_SECRET_ACCESS_KEY={0}\n", parameters.getFirst("awssecretKey")));
 			sb.append("\n\n#####windows\n\n");
-			sb.append(MessageFormat.format("set AWS_SESSION_TOKEN={1}", parameters.getFirst("sessionToken")));
-			sb.append(MessageFormat.format("set AWS_ACCESS_KEY_ID={1}", parameters.getFirst("awsaccessKeyId")));
-			sb.append(MessageFormat.format("set AWS_SECRET_ACCESS_KEY={1}", parameters.getFirst("awssecretKey")));
+			sb.append(MessageFormat.format("set AWS_SESSION_TOKEN={0}\n", parameters.getFirst("sessionToken")));
+			sb.append(MessageFormat.format("set AWS_ACCESS_KEY_ID={0}\n", parameters.getFirst("awsaccessKeyId")));
+			sb.append(MessageFormat.format("set AWS_SECRET_ACCESS_KEY={0}\n", parameters.getFirst("awssecretKey")));
 
 		} catch (Exception e) {
 			sb.append(e.getMessage());
