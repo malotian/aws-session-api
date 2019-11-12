@@ -27,7 +27,7 @@ public class AWSSessionTokenUsage implements Function {
 			HashMap data = (HashMap) req.getBody();
 			sb.append("#linux");
 			for (Object key : data.keySet()) {
-				sb.append(MessageFormat.format("export {}={}\n", key, data.get(key)));
+				sb.append(MessageFormat.format("export {0}={1}\n", key, data.get(key)));
 			}
 		} catch (Exception e) {
 			sb.append(e.getMessage());
