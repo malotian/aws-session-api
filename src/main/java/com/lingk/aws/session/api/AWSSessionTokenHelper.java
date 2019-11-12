@@ -2,6 +2,8 @@ package com.lingk.aws.session.api;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -25,6 +27,8 @@ import io.fission.Function;
 @SuppressWarnings("rawtypes")
 public class AWSSessionTokenHelper implements Function {
 
+	private static Logger LOG = LoggerFactory.getLogger(AWSSessionTokenHelper.class);
+
 	static HashMap<BasicAWSCredentials, AWSSecurityTokenService> stsClients = new HashMap<BasicAWSCredentials, AWSSecurityTokenService>();
 
 	static AWSSecurityTokenService getSTSClient(String accessKey, String secretKey) {
@@ -41,19 +45,26 @@ public class AWSSessionTokenHelper implements Function {
 	}
 
 	public ResponseEntity call(RequestEntity req, Context context) {
-		MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(req.getUrl()).build().getQueryParams();
-		AWSSecurityTokenService stsClient = getSTSClient(parameters.getFirst("accessKey"), parameters.getFirst("secretKey"));
 
-		GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest().withDurationSeconds(7200);
-		GetSessionTokenResult sessionTokenResult = stsClient.getSessionToken(getSessionTokenRequest);
-		Credentials sessionCredentials = sessionTokenResult.getCredentials().withSessionToken(sessionTokenResult.getCredentials().getSessionToken())
-				.withExpiration(sessionTokenResult.getCredentials().getExpiration());
+		try {
 
-		BasicSessionCredentials basicSessionCredentials = new BasicSessionCredentials(sessionCredentials.getAccessKeyId(), sessionCredentials.getSecretAccessKey(),
-				sessionCredentials.getSessionToken());
+			MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(req.getUrl()).build().getQueryParams();
+			AWSSecurityTokenService stsClient = getSTSClient(parameters.getFirst("accessKey"), parameters.getFirst("secretKey"));
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("content-type", "application/json");
-		return new ResponseEntity<BasicSessionCredentials>(basicSessionCredentials, headers, HttpStatus.OK);
+			GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest().withDurationSeconds(7200);
+			GetSessionTokenResult sessionTokenResult = stsClient.getSessionToken(getSessionTokenRequest);
+			Credentials sessionCredentials = sessionTokenResult.getCredentials().withSessionToken(sessionTokenResult.getCredentials().getSessionToken())
+					.withExpiration(sessionTokenResult.getCredentials().getExpiration());
+
+			BasicSessionCredentials basicSessionCredentials = new BasicSessionCredentials(sessionCredentials.getAccessKeyId(), sessionCredentials.getSecretAccessKey(),
+					sessionCredentials.getSessionToken());
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-type", "application/json");
+			return new ResponseEntity<BasicSessionCredentials>(basicSessionCredentials, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			LOG.info("error", e);
+			return new ResponseEntity<Exception>(e, HttpStatus.BAD_REQUEST);
+		}
 	}
 }
