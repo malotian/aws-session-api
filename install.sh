@@ -6,10 +6,10 @@ fission env create --name java --image fission/jvm-env --builder fission/jvm-bui
 pkgname=`fission pkg create --sourcearchive ${name}.zip --env java | cut -f2 -d "'"`
 echo $pkgname
 fission fn delete --name ${name}
-fission fn create --name ${name} --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenHelper --minscale 1 --mincpu 100 --maxcpu 500 --minmemory 128
+fission fn create --name ${name} --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenHelper --executortype newdeploy --minscale 1 --mincpu 100 --minmemory 128 
 fission route create --url /${name} --function ${name} --createingress
 fission fn delete --name ${name}-usage
-fission fn create --name ${name}-usage --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenUsage --minscale 1 --mincpu 100 --maxcpu 500 --minmemory 128 
+fission fn create --name ${name}-usage --pkg $pkgname --entrypoint com.lingk.aws.session.api.AWSSessionTokenUsage --executortype newdeploy --minscale 1 --mincpu 100 --minmemory 128 
 fission route create --url /${name}-usage --function ${name}-usage --createingress
 
 
