@@ -28,15 +28,10 @@ public class AWSSessionTokenUsage implements Function {
 			MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(req.getUrl()).build().getQueryParams();
 			Jwt jwt = JwtHelper.decode(parameters.getFirst("jwt"));
 			JsonNode claims = mapper.readTree(jwt.getClaims());
-
-			sb.append("#####linux\n\n");
-			sb.append(MessageFormat.format("export AWS_SESSION_TOKEN={0}\n", claims.get("sessionToken")));
-			sb.append(MessageFormat.format("export AWS_ACCESS_KEY_ID={0}\n", claims.get("awsaccessKeyId")));
-			sb.append(MessageFormat.format("export AWS_SECRET_ACCESS_KEY={0}\n", claims.get("awssecretKey")));
-			sb.append("\n\n#####windows\n\n");
-			sb.append(MessageFormat.format("set AWS_SESSION_TOKEN={0}\n", claims.get("sessionToken")));
-			sb.append(MessageFormat.format("set AWS_ACCESS_KEY_ID={0}\n", claims.get("awsaccessKeyId")));
-			sb.append(MessageFormat.format("set AWS_SECRET_ACCESS_KEY={0}\n", claims.get("awssecretKey")));
+			sb.append(MessageFormat.format("aws configure set aws_access_key_id {0} --profile lingk-fission\\n", claims.get("sessionToken")));
+			sb.append(MessageFormat.format("aws configure set aws_secret_access_key {0} --profile lingk-fission\\n", claims.get("awsaccessKeyId")));
+			sb.append(MessageFormat.format("aws configure set aws_session_token {0} --profile lingk-fission\\n", claims.get("awssecretKey")));
+			sb.append("aws eks --region TOBE-REPLACED-WITH-REGION update-kubeconfig --name cluster TOBE-REPLACED-WITH-CLUSTER --profile lingk-fission\\n");
 
 		} catch (Exception e) {
 			sb.append(e.getMessage());
@@ -45,4 +40,5 @@ public class AWSSessionTokenUsage implements Function {
 		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
 		return new ResponseEntity<StringBuffer>(sb, httpHeaders, HttpStatus.OK);
 	}
+
 }
