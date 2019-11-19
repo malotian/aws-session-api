@@ -1,6 +1,7 @@
 package com.lingk.faas.fission.aws.session.provider;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -30,6 +31,9 @@ public class AWSSessionTokenUsage implements Function {
 
 	@Override
 	public ResponseEntity call(RequestEntity req, Context context) {
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.TEXT_HTML);
+
 		final StringBuffer sb = new StringBuffer();
 		try {
 			final MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(req.getUrl()).build().getQueryParams();
@@ -42,17 +46,17 @@ public class AWSSessionTokenUsage implements Function {
 			sb.append(MessageFormat.format("\taws configure set aws_session_token {0} --profile lingk-fission\n", claims.get("SessionToken")));
 			sb.append(MessageFormat.format("\taws eks --region {0} update-kubeconfig --name fission-{0} --profile lingk-fission\n\n\n", "us-east-1"));
 			sb.append(MessageFormat.format("# **note**: with above fission access will be valid till: {0}", dt.toString(DateTimeFormat.fullDateTime())));
-			Files.readString(Paths.get("template.html")).replaceAll("<!--MARKDOWN HERE-->", sb.toString());
+			String response = Files.readString(Paths.get(AWSSessionTokenUsage.class.getClassLoader().getResource("template.html").toURI())).replaceAll("<!--MARKDOWN HERE-->",
+					sb.toString());
+			return new ResponseEntity<String>(response, httpHeaders, HttpStatus.OK);
 
 		} catch (final Exception e) {
 			sb.append(e.getMessage());
+			return new ResponseEntity<>(sb, httpHeaders, HttpStatus.OK);
 		}
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
-		return new ResponseEntity<>(sb, httpHeaders, HttpStatus.OK);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, URISyntaxException {
 		final MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(
 				"https://fission.lingkcore.com/aws-session-api-usage?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBY2Nlc3NLZXlJZCI6IkFTSUE2R1I0TjZSRlFMWkpOU05FIiwiU2VjcmV0QWNjZXNzS2V5IjoiV3JDY2FhSzBWVG9RZ282cWR5T21xb1BOMHF2dXMzR3JmaVB2Ly8yTiIsIlNlc3Npb25Ub2tlbiI6IkZ3b0daWEl2WVhkekVJSC8vLy8vLy8vLy93RWFEUHVPTkJHRkIwR3VyNzdjM2lLQkFYREhCd2gwL0U1dHVLNUMxQUFITlBzK0UvMnhDS0RDL3ZBS0gza0p6OXZXRWhKSEZDNVo0T2RSOVhnRnFwVXVKc3BhL1U0Ym9FUzNYZENYcEd5a3E0d2hUWDcwdHZtaTBYdGJHbzUxcCtxMmp3Rk53UGtVV2tGR2ZKem9DNE83UUI1cUJOalg3RDdBVmlDdFd2SmJjemVuR08rcmN0dzFmQUVJMTBQd3FuVlpHU2pFcU1mdUJUSW9RM0d6Q29Iak9MR3ZtcFVMYm5lK3pxRjlsTFdzenRvelRKWXhYWDQ3WWNqclBrSWVKWUlHY3c9PSIsIkV4cGlyYXRpb24iOiIyMDE5LTExLTE4VDAwOjE0OjEyLjAwMFoiLCJpYXQiOjE1NzQwMzI0NTJ9.nrKEIQanTDa4TvQ2B2cNCYZNWm8OrkqWqu6N4sXXMQU&state=g6Fo2SAwZDc1dUVYX0VIMmVpQ1cxRjNFQWFhRlFRcDgwRzRHWaN0aWTZIHE1Zlc2VkVvQ3M4SWZETDRxdUZoZDBEY2NUMUdmRWpUo2NpZNkgSlQwRGtJSXZIN28weElITWQ2NE1YMUZuZFVyTm5rdzA")
 				.build().getQueryParams();
@@ -66,7 +70,8 @@ public class AWSSessionTokenUsage implements Function {
 		sb.append(MessageFormat.format("`aws configure set aws_session_token {0} --profile lingk-fission`\n\n", claims.get("SessionToken")));
 		sb.append(MessageFormat.format("`aws eks --region {0} update-kubeconfig --name fission-{0} --profile lingk-fission`\n\n\n", "us-east-1"));
 		sb.append(MessageFormat.format("#### note: with above fission access will be valid till: {0}", dt.toString(DateTimeFormat.fullDateTime())));
-		String response = Files.readString(Paths.get("src/main/resources/template.html")).replaceAll("<!--MARKDOWN HERE-->", sb.toString());
+		String response = Files.readString(Paths.get(AWSSessionTokenUsage.class.getClassLoader().getResource("template.html").toURI())).replaceAll("<!--MARKDOWN HERE-->",
+				sb.toString());
 		System.out.println(response);
 	}
 

@@ -6,5 +6,5 @@ fission env create --name java --image fission/jvm-env --builder fission/jvm-bui
 pkgname=`fission pkg create --sourcearchive ${name}.zip --env java | cut -f2 -d "'"`
 echo $pkgname
 fission fn delete --name ${name}-usage
-fission fn create --name ${name}-usage --pkg $pkgname --fntimeout 180 --entrypoint faas.fission.aws.session.provider.AWSSessionTokenUsage 
+fission fn create --name ${name}-usage --pkg $pkgname --fntimeout 180 --entrypoint com.lingk.faas.fission.aws.session.provider.AWSSessionTokenUsage 
 fission route create --url /${name}-usage --function ${name}-usage --createingress
