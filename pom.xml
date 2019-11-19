@@ -4,12 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.lingk</groupId>
-	<artifactId>aws.session.api</artifactId>
+	<artifactId>faas.fission.aws.session.provider</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
-	<name>aws.session.api</name>
-	<url>http://maven.apache.org</url>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>

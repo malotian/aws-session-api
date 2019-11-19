@@ -1,4 +1,4 @@
-package faas.fission.aws.session.provider;
+package com.lingk.faas.fission.aws.session.provider;
 
 import java.io.IOException;
 import java.nio.file.Files;
