@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.lingk</groupId>
-	<artifactId>faas.fission.aws.session.provider</artifactId>
+	<artifactId>faas-fission-aws-session-provider</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
