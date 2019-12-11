@@ -42,7 +42,7 @@ public class AWSSessionTokenUsage implements Function {
 			sb.append(MessageFormat.format("`aws configure set aws_access_key_id {0} --profile lingk-fission`\n\n", claims.get("AccessKeyId")));
 			sb.append(MessageFormat.format("`aws configure set aws_secret_access_key {0} --profile lingk-fission`\n\n", claims.get("SecretAccessKey")));
 			sb.append(MessageFormat.format("`aws configure set aws_session_token {0} --profile lingk-fission`\n\n", claims.get("SessionToken")));
-			sb.append(MessageFormat.format("`aws eks --region {0} update-kubeconfig --name fission-{0} --profile lingk-fission`\n\n\n", "us-east-1"));
+			sb.append(MessageFormat.format("`aws eks --region {0} update-kubeconfig --name fission-{0}-{1} --profile lingk-fission`\n\n\n", "dev", "us-east-1"));
 			sb.append(MessageFormat.format("#### note: with above fission access will be valid till: {0}", dt.toString(DateTimeFormat.fullDateTime())));
 			final StringBuilder template = new StringBuilder();
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(AWSSessionTokenUsage.class.getClassLoader().getResourceAsStream("template.html")))) {
